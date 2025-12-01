@@ -1,0 +1,129 @@
+/* pages/css/admin.css */
+
+.admin-panel {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filters {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.filter-group input,
+.filter-group select {
+  width: 100%;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #2196F3;
+}
+
+.clear-btn {
+  padding: 10px 20px;
+  background: #757575;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.clear-btn:hover {
+  background: #616161;
+}
+
+.stats {
+  padding: 15px 20px;
+  background: #e3f2fd;
+  border-left: 4px solid #2196F3;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.stats p {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.stats strong {
+  color: #2196F3;
+}
+
+.admin-bookings-table {
+  overflow-x: auto;
+}
+
+.admin-bookings-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.admin-bookings-table th {
+  background: #2196F3;
+  color: white;
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #1976D2;
+}
+
+.admin-bookings-table td {
+  padding: 15px;
+  border: 1px solid #ddd;
+  color: #333;
+}
+
+.admin-bookings-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.admin-bookings-table tr:hover {
+  background: #e3f2fd;
+}
+
+.delete-btn {
+  padding: 8px 16px;
+  background: #f44336;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.delete-btn:hover {
+  background: #d32f2f;
+}
