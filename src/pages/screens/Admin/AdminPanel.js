@@ -1,8 +1,8 @@
 // pages/screens/AdminPanel.js
 
 import React, { useState, useEffect } from "react";
-import API from "../../api/api";
-import "../css/admin.css";
+import API from "../../../api/api";
+import "../../css/admin.css";
 
 export default function AdminPanel() {
   const [bookings, setBookings] = useState([]);
@@ -18,6 +18,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     fetchAllBookings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterDate, filterSlot]);
 
   const fetchAllBookings = async () => {
@@ -103,6 +104,10 @@ export default function AdminPanel() {
               <tr>
                 <th>User</th>
                 <th>Email</th>
+                <th>Reg No</th>
+                <th>Index No</th>
+                <th>Batch</th>
+                <th>Tel No</th>
                 <th>Date</th>
                 <th>Slot</th>
                 <th>Action</th>
@@ -113,6 +118,10 @@ export default function AdminPanel() {
                 <tr key={booking._id}>
                   <td>{booking.user?.name || 'N/A'}</td>
                   <td>{booking.user?.email || 'N/A'}</td>
+                  <td>{booking.user?.registrationNo || '-'}</td>
+                  <td>{booking.user?.indexNo || '-'}</td>
+                  <td>{booking.user?.batch || '-'}</td>
+                  <td>{booking.user?.telNo || '-'}</td>
                   <td>
                     {new Date(booking.date).toLocaleDateString('en-US', {
                       year: 'numeric',

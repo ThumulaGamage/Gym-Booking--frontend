@@ -1,9 +1,9 @@
 // pages/screens/AdminDashboard.js
 
 import React, { useEffect, useState } from 'react';
-import API from '../../api/api';
+import API from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
-import '../css/Dashboard.css';
+import '../../css/Dashboard.css';
 
 export default function AdminDashboard() {
   const [user, setUser] = useState(null);
@@ -90,10 +90,39 @@ export default function AdminDashboard() {
                   <span className="detail-label">Email</span>
                   <span className="detail-value">{user.email}</span>
                 </div>
+
                 <div className="detail-item">
                   <span className="detail-label">Role</span>
                   <span className="detail-value">{user.role}</span>
                 </div>
+
+                {user.registrationNo && (
+                  <div className="detail-item">
+                    <span className="detail-label">Registration No</span>
+                    <span className="detail-value">{user.registrationNo}</span>
+                  </div>
+                )}
+
+                {user.indexNo && (
+                  <div className="detail-item">
+                    <span className="detail-label">Index No</span>
+                    <span className="detail-value">{user.indexNo}</span>
+                  </div>
+                )}
+
+                {user.batch && (
+                  <div className="detail-item">
+                    <span className="detail-label">Batch</span>
+                    <span className="detail-value">{user.batch}</span>
+                  </div>
+                )}
+
+                {user.telNo && (
+                  <div className="detail-item">
+                    <span className="detail-label">Tel No</span>
+                    <span className="detail-value">{user.telNo}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -173,7 +202,17 @@ export default function AdminDashboard() {
                   <p>View and manage bookings</p>
                 </div>
 
-                {/* USER MANAGEMENT - NEW */}
+                {/* QR Scanner - NEW */}
+                <div
+                  className="link-card clickable"
+                  onClick={() => navigate("/admin/scanner")}
+                >
+                  <div className="link-icon">📷</div>
+                  <h4>QR Scanner</h4>
+                  <p>Scan student QR codes</p>
+                </div>
+
+                {/* User Management */}
                 <div
                   className="link-card clickable"
                   onClick={() => navigate("/admin/users")}
@@ -183,7 +222,7 @@ export default function AdminDashboard() {
                   <p>Add, edit, delete users</p>
                 </div>
 
-                {/* GYM SETTINGS - NEW */}
+                {/* Gym Settings */}
                 <div
                   className="link-card clickable"
                   onClick={() => navigate("/admin/settings")}
@@ -199,18 +238,8 @@ export default function AdminDashboard() {
                   onClick={() => navigate("/booking")}
                 >
                   <div className="link-icon">🏋️</div>
-                  <h4>Book Gym Slot</h4>
-                  <p>Reserve a workout time</p>
-                </div>
-
-                {/* My Bookings */}
-                <div
-                  className="link-card clickable"
-                  onClick={() => navigate("/my-bookings")}
-                >
-                  <div className="link-icon">📅</div>
-                  <h4>My Bookings</h4>
-                  <p>View personal bookings</p>
+                  <h4>Gym Booking</h4>
+                  <p>Book and manage slots</p>
                 </div>
 
                 {/* Reports - Coming Soon */}

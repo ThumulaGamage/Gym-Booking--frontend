@@ -12,31 +12,31 @@ export default function Booking() {
   const [slotAvailability, setSlotAvailability] = useState({});
   const [gymSettings, setGymSettings] = useState(null);
   const [slots, setSlots] = useState([]);
+  const [myBookings, setMyBookings] = useState([]);
+  const [bookingsLoading, setBookingsLoading] = useState(true);
 
   useEffect(() => {
     fetchGymSettings();
+    fetchMyBookings();
   }, []);
 
   useEffect(() => {
     if (gymSettings) {
       fetchAvailability();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, gymSettings]);
 
   const fetchGymSettings = async () => {
     try {
-      const res = await API.get('/admin/settings');
+      const res = await API.get('/bookings/settings');
       setGymSettings(res.data);
-      // Get enabled slots
       const enabledSlots = res.data.slots.filter(s => s.enabled);
       setSlots(enabledSlots);
     } catch (err) {
       console.error("Error fetching gym settings:", err);
-      // Fallback to default slots
-      setSlots([
-        { name: "4:00 PM - 6:00 PM", capacity: 10, enabled: true },
-        { name: "6:00 PM - 8:00 PM", capacity: 10, enabled: true }
-      ]);
+      setSlots([]);
+      setMsg("Unable to load gym settings. Please try again later.");
     }
   };
 
@@ -46,6 +46,18 @@ export default function Booking() {
       setSlotAvailability(res.data);
     } catch (err) {
       console.error("Error fetching availability:", err);
+    }
+  };
+
+  const fetchMyBookings = async () => {
+    try {
+      setBookingsLoading(true);
+      const res = await API.get('/bookings/my');
+      setMyBookings(res.data);
+    } catch (err) {
+      console.error("Error fetching bookings:", err);
+    } finally {
+      setBookingsLoading(false);
     }
   };
 
@@ -66,10 +78,26 @@ export default function Booking() {
       setMsg(res.data.msg);
       setSelectedSlot(null);
       fetchAvailability();
+      fetchMyBookings(); // Refresh my bookings after new booking
     } catch (err) {
       setMsg(err.response?.data?.msg || "Error booking slot");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelBooking = async (id) => {
+    if (!window.confirm("Are you sure you want to cancel this booking?")) {
+      return;
+    }
+
+    try {
+      const res = await API.delete(`/bookings/${id}`);
+      setMsg(res.data.msg);
+      fetchMyBookings();
+      fetchAvailability(); // Refresh availability after cancellation
+    } catch (err) {
+      setMsg(err.response?.data?.msg || "Error canceling booking");
     }
   };
 
@@ -85,12 +113,22 @@ export default function Booking() {
   };
 
   const isSlotDisabled = (slot) => {
-    // Check if slot is disabled in settings
     if (slotAvailability.slotCapacities?.[slot.name]?.enabled === false) {
       return true;
     }
     return false;
   };
+
+  const isPastBooking = (date) => {
+    const bookingDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return bookingDate < today;
+  };
+
+  // Separate upcoming and past bookings
+  const upcomingBookings = myBookings.filter(b => !isPastBooking(b.date));
+  const pastBookings = myBookings.filter(b => isPastBooking(b.date));
 
   // Check if booking is closed
   if (gymSettings && !gymSettings.bookingEnabled) {
@@ -101,6 +139,71 @@ export default function Booking() {
           <h2>🚫 Booking System Closed</h2>
           <p>The gym booking system is currently closed by the administrator.</p>
           <p>Please check back later or contact the gym staff.</p>
+        </div>
+
+        {/* Show My Bookings even when booking is closed */}
+        <div className="my-bookings-section">
+          <h2 className="section-title">My Bookings</h2>
+          {bookingsLoading ? (
+            <div className="loading-text">Loading your bookings...</div>
+          ) : myBookings.length === 0 ? (
+            <p className="no-bookings-text">You have no bookings yet.</p>
+          ) : (
+            <div className="bookings-container">
+              {upcomingBookings.length > 0 && (
+                <div className="bookings-group">
+                  <h3 className="group-title">Upcoming Bookings</h3>
+                  <div className="bookings-list">
+                    {upcomingBookings.map((booking) => (
+                      <div key={booking._id} className="booking-item">
+                        <div className="booking-info">
+                          <h4>{booking.slot}</h4>
+                          <p className="booking-date">
+                            {new Date(booking.date).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <button
+                          className="cancel-booking-btn"
+                          onClick={() => handleCancelBooking(booking._id)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {pastBookings.length > 0 && (
+                <div className="bookings-group">
+                  <h3 className="group-title">Past Bookings</h3>
+                  <div className="bookings-list">
+                    {pastBookings.map((booking) => (
+                      <div key={booking._id} className="booking-item past">
+                        <div className="booking-info">
+                          <h4>{booking.slot}</h4>
+                          <p className="booking-date">
+                            {new Date(booking.date).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <span className="past-badge">Completed</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -125,6 +228,71 @@ export default function Booking() {
           <h2>🚫 Gym Closed on This Date</h2>
           <p>Reason: {slotAvailability.closureReason}</p>
           <p>Please select a different date.</p>
+        </div>
+
+        {/* Show My Bookings */}
+        <div className="my-bookings-section">
+          <h2 className="section-title">My Bookings</h2>
+          {bookingsLoading ? (
+            <div className="loading-text">Loading your bookings...</div>
+          ) : myBookings.length === 0 ? (
+            <p className="no-bookings-text">You have no bookings yet.</p>
+          ) : (
+            <div className="bookings-container">
+              {upcomingBookings.length > 0 && (
+                <div className="bookings-group">
+                  <h3 className="group-title">Upcoming Bookings</h3>
+                  <div className="bookings-list">
+                    {upcomingBookings.map((booking) => (
+                      <div key={booking._id} className="booking-item">
+                        <div className="booking-info">
+                          <h4>{booking.slot}</h4>
+                          <p className="booking-date">
+                            {new Date(booking.date).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <button
+                          className="cancel-booking-btn"
+                          onClick={() => handleCancelBooking(booking._id)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {pastBookings.length > 0 && (
+                <div className="bookings-group">
+                  <h3 className="group-title">Past Bookings</h3>
+                  <div className="bookings-list">
+                    {pastBookings.map((booking) => (
+                      <div key={booking._id} className="booking-item past">
+                        <div className="booking-info">
+                          <h4>{booking.slot}</h4>
+                          <p className="booking-date">
+                            {new Date(booking.date).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <span className="past-badge">Completed</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -183,6 +351,71 @@ export default function Booking() {
       <button className="confirm-btn" onClick={handleBooking} disabled={loading || !selectedSlot}>
         {loading ? "Saving..." : "Confirm Booking"}
       </button>
+
+      {/* My Bookings Section */}
+      <div className="my-bookings-section">
+        <h2 className="section-title">My Bookings</h2>
+        {bookingsLoading ? (
+          <div className="loading-text">Loading your bookings...</div>
+        ) : myBookings.length === 0 ? (
+          <p className="no-bookings-text">You have no bookings yet. Book your first slot above!</p>
+        ) : (
+          <div className="bookings-container">
+            {upcomingBookings.length > 0 && (
+              <div className="bookings-group">
+                <h3 className="group-title">Upcoming Bookings ({upcomingBookings.length})</h3>
+                <div className="bookings-list">
+                  {upcomingBookings.map((booking) => (
+                    <div key={booking._id} className="booking-item">
+                      <div className="booking-info">
+                        <h4>{booking.slot}</h4>
+                        <p className="booking-date">
+                          {new Date(booking.date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      <button
+                        className="cancel-booking-btn"
+                        onClick={() => handleCancelBooking(booking._id)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {pastBookings.length > 0 && (
+              <div className="bookings-group">
+                <h3 className="group-title">Past Bookings ({pastBookings.length})</h3>
+                <div className="bookings-list">
+                  {pastBookings.map((booking) => (
+                    <div key={booking._id} className="booking-item past">
+                      <div className="booking-info">
+                        <h4>{booking.slot}</h4>
+                        <p className="booking-date">
+                          {new Date(booking.date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                      <span className="past-badge">Completed</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

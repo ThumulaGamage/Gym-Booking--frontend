@@ -1,7 +1,7 @@
 /* pages/css/admin.css */
 
 .admin-panel {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 50px auto;
   padding: 30px;
   background: #fff;
@@ -87,21 +87,24 @@
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+  font-size: 0.9rem;
 }
 
 .admin-bookings-table th {
   background: #2196F3;
   color: white;
-  padding: 15px;
+  padding: 12px 10px;
   text-align: left;
   font-weight: 600;
   border: 1px solid #1976D2;
+  white-space: nowrap;
 }
 
 .admin-bookings-table td {
-  padding: 15px;
+  padding: 12px 10px;
   border: 1px solid #ddd;
   color: #333;
+  white-space: nowrap;
 }
 
 .admin-bookings-table tr:nth-child(even) {

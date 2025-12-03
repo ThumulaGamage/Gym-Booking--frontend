@@ -5,8 +5,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import API from '../../api/api';
-import UserDashboard from './UserDashboard';
-import AdminDashboard from './AdminDashboard';
+import UserDashboard from './User/UserDashboard';
+import AdminDashboard from './Admin/AdminDashboard';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);

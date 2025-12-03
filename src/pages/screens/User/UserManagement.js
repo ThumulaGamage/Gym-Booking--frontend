@@ -1,8 +1,8 @@
 // pages/screens/UserManagement.js
 
 import React, { useState, useEffect } from 'react';
-import API from '../../api/api';
-import '../css/UserManagement.css';
+import API from '../../../api/api';
+import '../../css/UserManagement.css';
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -15,7 +15,11 @@ export default function UserManagement() {
     name: '',
     email: '',
     password: '',
-    role: 'student'
+    role: 'student',
+    registrationNo: '',
+    indexNo: '',
+    batch: '',
+    telNo: ''
   });
 
   useEffect(() => {
@@ -37,10 +41,25 @@ export default function UserManagement() {
   const handleAddUser = async (e) => {
     e.preventDefault();
     try {
-      const res = await API.post('/admin/users', formData);
+      const res = await API.post('/admin/users', {
+        ...formData,
+        registrationNo: formData.registrationNo || null,
+        indexNo: formData.indexNo || null,
+        batch: formData.batch || null,
+        telNo: formData.telNo || null
+      });
       setMsg(res.data.msg);
       setShowAddModal(false);
-      setFormData({ name: '', email: '', password: '', role: 'student' });
+      setFormData({ 
+        name: '', 
+        email: '', 
+        password: '', 
+        role: 'student',
+        registrationNo: '',
+        indexNo: '',
+        batch: '',
+        telNo: ''
+      });
       fetchUsers();
     } catch (err) {
       setMsg(err.response?.data?.msg || 'Error adding user');
@@ -53,7 +72,11 @@ export default function UserManagement() {
       const res = await API.put(`/admin/users/${selectedUser._id}`, {
         name: formData.name,
         email: formData.email,
-        role: formData.role
+        role: formData.role,
+        registrationNo: formData.registrationNo || null,
+        indexNo: formData.indexNo || null,
+        batch: formData.batch || null,
+        telNo: formData.telNo || null
       });
       setMsg(res.data.msg);
       setShowEditModal(false);
@@ -83,7 +106,11 @@ export default function UserManagement() {
     setFormData({
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      registrationNo: user.registrationNo || '',
+      indexNo: user.indexNo || '',
+      batch: user.batch || '',
+      telNo: user.telNo || ''
     });
     setShowEditModal(true);
   };
@@ -129,6 +156,10 @@ export default function UserManagement() {
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
+              <th>Reg No</th>
+              <th>Index No</th>
+              <th>Batch</th>
+              <th>Tel No</th>
               <th>Joined Date</th>
               <th>Actions</th>
             </tr>
@@ -143,6 +174,10 @@ export default function UserManagement() {
                     {user.role}
                   </span>
                 </td>
+                <td>{user.registrationNo || '-'}</td>
+                <td>{user.indexNo || '-'}</td>
+                <td>{user.batch || '-'}</td>
+                <td>{user.telNo || '-'}</td>
                 <td>
                   {new Date(user.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -203,6 +238,46 @@ export default function UserManagement() {
                   required
                 />
               </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Registration No</label>
+                  <input
+                    type="text"
+                    placeholder="EN100100"
+                    value={formData.registrationNo}
+                    onChange={(e) => setFormData({ ...formData, registrationNo: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Index No</label>
+                  <input
+                    type="text"
+                    placeholder="22ENG00"
+                    value={formData.indexNo}
+                    onChange={(e) => setFormData({ ...formData, indexNo: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Batch</label>
+                  <input
+                    type="text"
+                    placeholder="07"
+                    value={formData.batch}
+                    onChange={(e) => setFormData({ ...formData, batch: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Tel No</label>
+                  <input
+                    type="text"
+                    placeholder="0771234567"
+                    value={formData.telNo}
+                    onChange={(e) => setFormData({ ...formData, telNo: e.target.value })}
+                  />
+                </div>
+              </div>
               <div className="form-group">
                 <label>Role</label>
                 <select
@@ -249,6 +324,46 @@ export default function UserManagement() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
                 />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Registration No</label>
+                  <input
+                    type="text"
+                    placeholder="EN100100"
+                    value={formData.registrationNo}
+                    onChange={(e) => setFormData({ ...formData, registrationNo: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Index No</label>
+                  <input
+                    type="text"
+                    placeholder="22ENG00"
+                    value={formData.indexNo}
+                    onChange={(e) => setFormData({ ...formData, indexNo: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Batch</label>
+                  <input
+                    type="text"
+                    placeholder="07"
+                    value={formData.batch}
+                    onChange={(e) => setFormData({ ...formData, batch: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Tel No</label>
+                  <input
+                    type="text"
+                    placeholder="0771234567"
+                    value={formData.telNo}
+                    onChange={(e) => setFormData({ ...formData, telNo: e.target.value })}
+                  />
+                </div>
               </div>
               <div className="form-group">
                 <label>Role</label>

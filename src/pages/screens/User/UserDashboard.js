@@ -1,9 +1,9 @@
 // pages/screens/UserDashboard.js
 
 import React, { useEffect, useState } from 'react';
-import API from '../../api/api';
+import API from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
-import '../css/Dashboard.css';
+import '../../css/Dashboard.css';
 
 export default function UserDashboard() {
   const [user, setUser] = useState(null);
@@ -161,21 +161,14 @@ export default function UserDashboard() {
                   <p>Reserve your workout time</p>
                 </div>
 
-                {/* My Bookings */}
+                {/* My QR Code - UPDATED */}
                 <div
                   className="link-card clickable"
-                  onClick={() => navigate("/my-bookings")}
+                  onClick={() => navigate("/my-qr")}
                 >
-                  <div className="link-icon">📅</div>
-                  <h4>My Bookings</h4>
-                  <p>View and manage bookings</p>
-                </div>
-
-                <div className="link-card">
                   <div className="link-icon">📱</div>
                   <h4>My QR Code</h4>
-                  <p>Access your digital pass</p>
-                  <span className="coming-soon">Coming Soon</span>
+                  <p>Generate check-in QR code</p>
                 </div>
 
                 <div className="link-card">

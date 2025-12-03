@@ -1,8 +1,8 @@
 // pages/screens/GymSettings.js
 
 import React, { useState, useEffect } from 'react';
-import API from '../../api/api';
-import '../css/GymSettings.css';
+import API from '../../../api/api';
+import '../../css/GymSettings.css';
 
 export default function GymSettings() {
   const [settings, setSettings] = useState(null);
