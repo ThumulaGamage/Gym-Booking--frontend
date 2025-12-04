@@ -1,42 +1,15 @@
 // components/AdminRoute.js
-
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
-import API from '../api/api';
+import { AuthContext } from '../context/AuthContext';
 
 const AdminRoute = ({ children }) => {
-  const [isAdmin, setIsAdmin] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useContext(AuthContext);
 
-  useEffect(() => {
-    checkAdmin();
-  }, []);
+  if (loading) return <div>Loading...</div>;
 
-  const checkAdmin = async () => {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      setIsAdmin(false);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      // You'll need to create this endpoint to verify admin status
-      const res = await API.get('/auth/verify-admin');
-      setIsAdmin(res.data.isAdmin);
-    } catch (err) {
-      setIsAdmin(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!isAdmin) {
+  // Check admin role from user object
+  if (!user || user.role !== 'admin') {
     return <Navigate to="/dashboard" replace />;
   }
 
