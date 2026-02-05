@@ -1,6 +1,5 @@
 // pages/screens/Dashboard.js
 // This component routes to correct dashboard based on user role
-// REPLACE your existing Dashboard.js with this
 
 import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
@@ -29,7 +28,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="page-background">
+      <div className="modern-dashboard">
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading...</p>

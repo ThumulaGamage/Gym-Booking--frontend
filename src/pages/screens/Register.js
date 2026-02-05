@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import API from '../../api/api';
-import '../css/Register.css';   // <-- keep your OLD style
+import '../css/Register.css';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -85,22 +85,20 @@ export default function Register() {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-
-        {/* HEADER */}
-        <div className="register-header">
-          <div className="register-icon">💪</div>
-          <h2 className="register-title">Create Account</h2>
-          <p className="register-subtitle">Join our gym management system</p>
+    <div className="auth-container">
+      <div className="auth-card register-card-extended">
+        {/* Header */}
+        <div className="auth-header">
+          <div className="auth-icon">💪</div>
+          <h1 className="auth-title">Create Account</h1>
+          <p className="auth-subtitle">Join our gym management system</p>
         </div>
 
-        {/* ERROR MESSAGE */}
+        {/* Error Message */}
         {msg && <div className="error-message">{msg}</div>}
 
-        {/* FORM */}
-        <form onSubmit={onSubmit} className="register-form">
-
+        {/* Form */}
+        <form onSubmit={onSubmit} className="auth-form">
           <div className="form-group">
             <label className="form-label">Full Name *</label>
             <input
@@ -110,6 +108,7 @@ export default function Register() {
               placeholder="Enter your full name"
               className="form-input"
               required
+              disabled={loading}
             />
           </div>
 
@@ -123,6 +122,7 @@ export default function Register() {
               placeholder="Enter your email"
               className="form-input"
               required
+              disabled={loading}
             />
           </div>
 
@@ -137,6 +137,7 @@ export default function Register() {
                 placeholder="EN100100"
                 maxLength="8"
                 className="form-input"
+                disabled={loading}
               />
               <small className="form-hint">Format: EN100100</small>
             </div>
@@ -150,6 +151,7 @@ export default function Register() {
                 placeholder="22ENG00"
                 maxLength="8"
                 className="form-input"
+                disabled={loading}
               />
               <small className="form-hint">Format: 22ENG00</small>
             </div>
@@ -166,6 +168,7 @@ export default function Register() {
                 placeholder="07"
                 maxLength="2"
                 className="form-input"
+                disabled={loading}
               />
             </div>
 
@@ -178,6 +181,7 @@ export default function Register() {
                 placeholder="0771234567"
                 maxLength="10"
                 className="form-input"
+                disabled={loading}
               />
             </div>
           </div>
@@ -190,9 +194,10 @@ export default function Register() {
               name="password"
               value={password}
               onChange={onChange}
-              placeholder="Enter password"
+              placeholder="Enter password (min. 6 characters)"
               className="form-input"
               required
+              disabled={loading}
             />
           </div>
 
@@ -206,11 +211,12 @@ export default function Register() {
               placeholder="Re-enter password"
               className="form-input"
               required
+              disabled={loading}
             />
           </div>
 
-          {/* BUTTON */}
-          <button className="register-btn" disabled={loading}>
+          {/* Button */}
+          <button className="auth-button" disabled={loading}>
             {loading ? (
               <>
                 <span className="spinner"></span>
@@ -222,25 +228,36 @@ export default function Register() {
           </button>
         </form>
 
-        {/* FOOTER */}
-        <div className="register-footer">
+        {/* Footer */}
+        <div className="auth-footer">
           <p className="footer-text">
-            Already have an account?
-            <Link to="/login" className="login-link"> Sign in here</Link>
+            Already have an account?{' '}
+            <Link to="/login" className="auth-link">Sign in here</Link>
           </p>
         </div>
 
-        {/* FEATURES BOX */}
-        <div className="features-section">
+        {/* Features */}
+        <div className="auth-features">
           <h4 className="features-title">What you'll get:</h4>
-          <ul className="features-list">
-            <li>📅 Easy gym slot booking</li>
-            <li>📱 Digital QR code access</li>
-            <li>📊 Attendance tracking</li>
-            <li>🏆 Fitness progress monitoring</li>
-          </ul>
+          <div className="features-grid">
+            <div className="feature-item">
+              <span className="feature-icon">📅</span>
+              <span className="feature-text">Easy Booking</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📱</span>
+              <span className="feature-text">QR Access</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📊</span>
+              <span className="feature-text">Track Attendance</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">🏆</span>
+              <span className="feature-text">Progress Monitor</span>
+            </div>
+          </div>
         </div>
-
       </div>
     </div>
   );

@@ -1,6 +1,8 @@
+// pages/screens/Login.js
+
 import React, { useState } from 'react';
-import API from '../../api/api';
 import { useNavigate, Link } from 'react-router-dom';
+import API from '../../api/api';
 import '../css/Login.css';
 
 export default function Login() {
@@ -9,9 +11,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const onChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMsg('');
@@ -29,24 +31,27 @@ export default function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="login-header">
-          <div className="login-icon">🏋️</div>
-          <h2 className="login-title">Welcome Back</h2>
-          <p className="login-subtitle">Sign in to your account</p>
+    <div className="auth-container">
+      <div className="auth-card">
+        {/* Header */}
+        <div className="auth-header">
+          <div className="auth-icon">🏋️</div>
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Sign in to your gym account</p>
         </div>
 
+        {/* Error Message */}
         {msg && <div className="error-message">{msg}</div>}
 
-        <form onSubmit={onSubmit} className="login-form">
+        {/* Login Form */}
+        <form onSubmit={onSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="email" className="form-label">Email Address</label>
             <input
               id="email"
               name="email"
-              placeholder="Enter your email"
               type="email"
+              placeholder="Enter your email"
               value={form.email}
               onChange={onChange}
               className="form-input"
@@ -60,8 +65,8 @@ export default function Login() {
             <input
               id="password"
               name="password"
-              placeholder="Enter your password"
               type="password"
+              placeholder="Enter your password"
               value={form.password}
               onChange={onChange}
               className="form-input"
@@ -72,7 +77,7 @@ export default function Login() {
 
           <button 
             type="submit" 
-            className="login-btn"
+            className="auth-button"
             disabled={loading}
           >
             {loading ? (
@@ -86,11 +91,35 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="login-footer">
+        {/* Footer */}
+        <div className="auth-footer">
           <p className="footer-text">
-            Don't have an account? 
-            <Link to="/register" className="register-link"> Sign up here</Link>
+            Don't have an account?{' '}
+            <Link to="/register" className="auth-link">Sign up here</Link>
           </p>
+        </div>
+
+        {/* Features */}
+        <div className="auth-features">
+          <h4 className="features-title">Why use our gym portal?</h4>
+          <div className="features-grid">
+            <div className="feature-item">
+              <span className="feature-icon">📅</span>
+              <span className="feature-text">Easy Booking</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📱</span>
+              <span className="feature-text">QR Access</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">📊</span>
+              <span className="feature-text">Track Progress</span>
+            </div>
+            <div className="feature-item">
+              <span className="feature-icon">🏆</span>
+              <span className="feature-text">Stay Motivated</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

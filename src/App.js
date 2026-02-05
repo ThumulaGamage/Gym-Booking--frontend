@@ -1,11 +1,13 @@
-// App.js
+// App.js - COMPLETE WITH ALL ROUTES
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Register from './pages/screens/Register';
 import Login from './pages/screens/Login';
 import Dashboard from './pages/screens/Dashboard';
+import UserDashboard from './pages/screens/User/UserDashboard';
 import Booking from "./pages/screens/booking";
+import MyBookings from "./pages/screens/User/MyBookings";
 import AdminPanel from "./pages/screens/Admin/AdminPanel";
 import UserManagement from "./pages/screens/User/UserManagement";
 import GymSettings from "./pages/screens/Admin/GymSettings";
@@ -18,13 +20,21 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/register" element={<Register/>} />
         <Route path="/login" element={<Login/>} />
         
+        {/* User routes (Protected) */}
         <Route path="/dashboard" element={
           <PrivateRoute>
             <Dashboard />
+          </PrivateRoute>
+        } />
+
+        <Route path="/user/dashboard" element={
+          <PrivateRoute>
+            <UserDashboard />
           </PrivateRoute>
         } />
         
@@ -34,13 +44,31 @@ function App() {
           </PrivateRoute>
         } />
 
-        <Route path="/my-qr" element={
+        <Route path="/my-bookings" element={
+          <PrivateRoute>
+            <MyBookings />
+          </PrivateRoute>
+        } />
+
+        <Route path="/user/bookings" element={
+          <PrivateRoute>
+            <MyBookings />
+          </PrivateRoute>
+        } />
+
+        <Route path="/user/qrcode" element={
+          <PrivateRoute>
+            <MyQRCode />
+          </PrivateRoute>
+        } />
+
+        <Route path="/qrcode" element={
           <PrivateRoute>
             <MyQRCode />
           </PrivateRoute>
         } />
         
-        {/* Admin-only routes */}
+        {/* Admin routes (Admin only) */}
         <Route path="/admin" element={
           <AdminRoute>
             <AdminPanel />
@@ -64,6 +92,9 @@ function App() {
             <QRScanner />
           </AdminRoute>
         } />
+
+        {/* Catch-all route for 404 */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );

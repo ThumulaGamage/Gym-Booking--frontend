@@ -1,90 +1,402 @@
-/* pages/css/mybookings.css */
+/* pages/css/MyBookings.css - UPDATED FOR MODERN LAYOUT */
 
-.my-bookings-page {
-  max-width: 900px;
-  margin: 50px auto;
-  padding: 30px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+/* Remove old page wrapper styles - now using Dashboard.css */
 
-.loading {
-  text-align: center;
-  padding: 50px;
-  font-size: 1.2rem;
-  color: #666;
-}
-
-.no-bookings {
-  text-align: center;
-  padding: 50px;
-  color: #666;
-  font-size: 1.1rem;
-}
-
+/* Bookings List Container */
 .bookings-list {
   display: grid;
   gap: 20px;
 }
 
+/* Modern Booking Card - Display Only (Full Width) */
 .booking-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 25px;
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  background: #f9f9f9;
+  padding: 24px;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.booking-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .booking-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-3px);
+  border-color: #667eea;
 }
 
+.booking-card:hover::before {
+  opacity: 1;
+}
+
+/* Past Booking Styling */
 .booking-card.past {
-  opacity: 0.6;
-  background: #f5f5f5;
-  border-color: #ccc;
+  opacity: 0.7;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.booking-card.past::before {
+  background: #94a3b8;
+}
+
+.booking-card.past:hover {
+  border-color: #94a3b8;
+}
+
+/* Booking Info Section */
+.booking-info {
+  flex: 1;
 }
 
 .booking-info h3 {
-  margin: 0 0 10px 0;
-  color: #333;
-  font-size: 1.3rem;
+  margin: 0 0 12px 0;
+  color: #1a1d29;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.booking-slot-icon {
+  font-size: 24px;
 }
 
 .booking-date {
-  margin: 5px 0;
-  color: #666;
-  font-size: 1rem;
+  margin: 6px 0;
+  color: #64748b;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
+.booking-date-icon {
+  font-size: 16px;
+}
+
+.booking-details-row {
+  display: flex;
+  gap: 20px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.booking-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #475569;
+}
+
+.booking-detail-item .icon {
+  font-size: 16px;
+}
+
+/* Status Badges */
 .past-badge {
   display: inline-block;
-  margin-top: 10px;
-  padding: 5px 12px;
-  background: #ff9800;
-  color: white;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  padding: 6px 14px;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 600;
+  margin-top: 12px;
 }
 
+.upcoming-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #d1fae5;
+  color: #059669;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+/* Cancel Button */
 .cancel-btn {
-  padding: 10px 25px;
-  background: #f44336;
+  padding: 12px 24px;
+  background: #ef4444;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
 .cancel-btn:hover {
-  background: #d32f2f;
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.cancel-btn:active {
+  transform: translateY(0);
+}
+
+.cancel-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* QR Code Button */
+.qr-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  margin-right: 12px;
+}
+
+.qr-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* Action Buttons Container */
+.booking-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Empty State - Now uses Dashboard.css .empty-state */
+/* Just override specific styles if needed */
+.no-bookings-custom {
+  padding: 80px 40px;
+}
+
+/* Filter Tabs */
+.booking-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0;
+}
+
+.filter-tab {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.filter-tab:hover {
+  color: #1a1d29;
+}
+
+.filter-tab.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.filter-count {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  background: #e2e8f0;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.filter-tab.active .filter-count {
+  background: #e0e7ff;
+  color: #667eea;
+}
+
+/* Booking Summary Stats */
+.bookings-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-card {
+  padding: 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+  border-color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+}
+
+.summary-card .icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.summary-card .value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1d29;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.summary-card .label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .booking-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .booking-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .cancel-btn,
+  .qr-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .booking-info h3 {
+    font-size: 18px;
+  }
+
+  .booking-details-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .booking-filters {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .filter-tab {
+    white-space: nowrap;
+    padding: 10px 20px;
+  }
+
+  .bookings-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card {
+    padding: 16px;
+  }
+
+  .booking-info h3 {
+    font-size: 16px;
+  }
+
+  .booking-date {
+    font-size: 14px;
+  }
+
+  .cancel-btn,
+  .qr-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Loading State - Uses Dashboard.css spinner */
+/* Add custom positioning if needed */
+
+/* Animation for new bookings */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.booking-card {
+  animation: slideIn 0.3s ease;
+}
+
+/* Hover effect for booking time */
+.booking-info h3:hover .booking-slot-icon {
+  transform: scale(1.2);
+  transition: transform 0.3s ease;
+}
+
+/* Success message for cancellation */
+.cancel-success {
+  background: #d1fae5;
+  color: #065f46;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  border-left: 4px solid #059669;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+.cancel-success::before {
+  content: "✓";
+  font-size: 20px;
+  font-weight: 700;
 }

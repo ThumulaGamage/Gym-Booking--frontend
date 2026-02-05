@@ -1,150 +1,193 @@
-/* pages/css/QRCode.css */
+/* pages/css/QRCode.css - UPDATED FOR MODERN LAYOUT */
 
-.qr-code-page {
-  max-width: 800px;
-  margin: 50px auto;
-  padding: 30px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+/* Remove old page wrapper styles - now using Dashboard.css */
 
-.title {
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-  font-size: 2rem;
-}
-
-.message {
-  padding: 12px 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: 500;
-}
-
-.message.success {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.message.error {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
+/* QR Section Styles */
 .qr-section {
-  margin-bottom: 50px;
+  margin-bottom: 24px;
 }
 
+/* QR Generate Card */
 .qr-generate {
   text-align: center;
-  padding: 50px 30px;
-  background: #f9f9f9;
-  border-radius: 12px;
+  padding: 60px 40px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
 }
 
 .qr-info h3 {
-  margin: 0 0 15px 0;
-  color: #333;
-  font-size: 1.5rem;
+  margin: 0 0 16px 0;
+  color: #1a1d29;
+  font-size: 24px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .qr-info p {
-  margin: 0 0 20px 0;
-  color: #666;
-  font-size: 1.1rem;
+  margin: 0 0 24px 0;
+  color: #64748b;
+  font-size: 16px;
 }
 
+/* QR Instructions */
 .qr-instructions {
   list-style: none;
   padding: 0;
-  margin: 30px 0;
+  margin: 32px 0;
   text-align: left;
-  max-width: 400px;
+  max-width: 450px;
   margin-left: auto;
   margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .qr-instructions li {
-  padding: 12px 20px;
-  margin-bottom: 10px;
+  padding: 16px 20px;
   background: white;
-  border-radius: 8px;
-  border-left: 4px solid #4CAF50;
-  color: #555;
+  border-radius: 12px;
+  border-left: 4px solid #667eea;
+  color: #1a1d29;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.qr-instructions li:hover {
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.qr-instructions li::before {
+  content: "✓";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Generate Button */
 .generate-btn {
-  padding: 15px 40px;
+  padding: 16px 48px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 1.2rem;
+  border-radius: 12px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .generate-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
 
 .generate-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* QR Display Card */
 .qr-display {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  padding: 30px;
+  border-radius: 16px;
+  padding: 32px;
   color: white;
   text-align: center;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
 }
 
+/* QR Header */
 .qr-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .qr-header h3 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 24px;
+  font-weight: 700;
 }
 
+/* QR Timer */
 .qr-timer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: rgba(255, 255, 255, 0.2);
-  padding: 10px 20px;
-  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .timer-icon {
-  font-size: 1.5rem;
+  font-size: 24px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
 }
 
 .timer-text {
-  font-size: 1.3rem;
+  font-size: 22px;
   font-weight: 700;
   font-family: 'Courier New', monospace;
+  min-width: 70px;
 }
 
+/* QR Code Container */
 .qr-code-container {
   background: white;
-  padding: 30px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 32px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .qr-image {
@@ -152,135 +195,309 @@
   height: auto;
   display: block;
   margin: 0 auto;
+  border-radius: 8px;
 }
 
+/* QR User Info */
 .qr-user-info {
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
 .qr-user-info h4 {
-  margin: 0 0 10px 0;
-  font-size: 1.3rem;
+  margin: 0 0 12px 0;
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .qr-user-info p {
-  margin: 5px 0;
-  opacity: 0.9;
+  margin: 6px 0;
+  opacity: 0.95;
+  font-size: 15px;
 }
 
+/* Refresh Button */
 .refresh-btn {
-  padding: 12px 30px;
+  padding: 14px 32px;
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: 2px solid white;
-  border-radius: 8px;
-  font-size: 1rem;
+  border-radius: 10px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .refresh-btn:hover {
   background: white;
   color: #667eea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Attendance Section */
 .attendance-section {
-  margin-top: 50px;
-  padding-top: 40px;
-  border-top: 2px solid #e0e0e0;
+  margin-top: 24px;
 }
 
 .attendance-section h2 {
-  color: #333;
-  margin-bottom: 25px;
-  font-size: 1.5rem;
+  color: #1a1d29;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .no-attendance {
   text-align: center;
-  color: #999;
-  padding: 40px;
-  font-size: 1.1rem;
+  color: #64748b;
+  padding: 60px 40px;
+  font-size: 16px;
 }
 
+/* Attendance List */
 .attendance-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
+/* Attendance Card */
 .attendance-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
-  background: #f9f9f9;
-  border-radius: 10px;
-  border-left: 4px solid #4CAF50;
-  transition: all 0.3s;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  border-left: 4px solid #10b981;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .attendance-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateX(5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateX(8px);
 }
 
+/* Attendance Info */
 .attendance-info h4 {
-  margin: 0 0 8px 0;
-  color: #333;
-  font-size: 1.1rem;
+  margin: 0 0 10px 0;
+  color: #1a1d29;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .attendance-date,
 .check-in-time,
 .scanned-by {
-  margin: 5px 0;
-  color: #666;
-  font-size: 0.9rem;
+  margin: 6px 0;
+  color: #64748b;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
+.attendance-date::before {
+  content: "📅";
+}
+
+.check-in-time::before {
+  content: "🕐";
+}
+
+.scanned-by::before {
+  content: "👤";
+}
+
+/* Status Badge */
 .status-badge {
   padding: 8px 16px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .status-badge.present {
-  background: #d4edda;
-  color: #155724;
+  background: #d1fae5;
+  color: #059669;
 }
 
 .status-badge.late {
-  background: #fff3cd;
-  color: #856404;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .status-badge.absent {
-  background: #f8d7da;
-  color: #721c24;
+  background: #fee2e2;
+  color: #991b1b;
 }
 
+/* Info Banner */
+.qr-info-banner {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+  border: 2px solid #c7d2fe;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.qr-info-banner .icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.qr-info-banner .content {
+  flex: 1;
+}
+
+.qr-info-banner h4 {
+  margin: 0 0 8px 0;
+  color: #1a1d29;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.qr-info-banner p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .qr-code-page {
-    padding: 20px;
-    margin: 20px;
+  .qr-generate {
+    padding: 40px 24px;
+  }
+
+  .qr-info h3 {
+    font-size: 20px;
+  }
+
+  .qr-instructions {
+    max-width: 100%;
+  }
+
+  .qr-instructions li {
+    font-size: 14px;
+    padding: 14px 16px;
+  }
+
+  .generate-btn {
+    width: 100%;
+    padding: 14px 32px;
+    font-size: 16px;
+  }
+
+  .qr-display {
+    padding: 24px;
   }
 
   .qr-header {
     flex-direction: column;
-    gap: 15px;
+    align-items: stretch;
+  }
+
+  .qr-timer {
+    justify-content: center;
+  }
+
+  .qr-code-container {
+    padding: 24px;
+  }
+
+  .qr-user-info h4 {
+    font-size: 18px;
+  }
+
+  .refresh-btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .attendance-card {
     flex-direction: column;
     align-items: flex-start;
-    gap: 15px;
+    gap: 16px;
   }
 
   .status-badge {
     align-self: flex-start;
   }
+
+  .qr-info-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .qr-generate {
+    padding: 32px 20px;
+  }
+
+  .qr-display {
+    padding: 20px;
+  }
+
+  .qr-header h3 {
+    font-size: 20px;
+  }
+
+  .timer-text {
+    font-size: 18px;
+  }
+
+  .attendance-info h4 {
+    font-size: 16px;
+  }
+}
+
+/* Loading Animation */
+.qr-loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.qr-loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success Message Override */
+.message.success {
+  background: #d1fae5;
+  color: #059669;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  border-left: 4px solid #059669;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.message.success::before {
+  content: "✓";
+  font-size: 20px;
+  font-weight: 700;
 }

@@ -1,20 +1,28 @@
-// pages/screens/QRScanner.js
+// pages/screens/Admin/QRScanner.js
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import API from '../../../api/api';
 import '../../css/QRScanner.css';
+import '../../css/Dashboard.css';
 
 export default function QRScanner() {
+  const [user, setUser] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState(null);
   const [msg, setMsg] = useState('');
   const [todayAttendance, setTodayAttendance] = useState([]);
   const [statistics, setStatistics] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scannerRef = useRef(null);
   const html5QrcodeScanner = useRef(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+    fetchUser();
     fetchTodayAttendance();
     fetchStatistics();
   }, []);
@@ -43,6 +51,15 @@ export default function QRScanner() {
       }
     };
   }, [scanning]);
+
+  const fetchUser = async () => {
+    try {
+      const res = await API.get('/auth/me');
+      setUser(res.data);
+    } catch (err) {
+      console.error('Error fetching user:', err);
+    }
+  };
 
   const fetchTodayAttendance = async () => {
     try {
@@ -103,130 +120,245 @@ export default function QRScanner() {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
+  const menuItems = [
+    { icon: '📊', label: 'Dashboard', path: '/dashboard' },
+    { icon: '📋', label: 'All Bookings', path: '/admin' },
+    { icon: '📷', label: 'QR Scanner', path: '/admin/scanner' },
+    { icon: '👥', label: 'Users', path: '/admin/users' },
+    { icon: '⚙️', label: 'Settings', path: '/admin/settings' },
+    { icon: '🏋️', label: 'Book Slot', path: '/booking' },
+  ];
+
+  const isActiveRoute = (path) => {
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/';
+    }
+    return location.pathname === path;
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
-    <div className="qr-scanner-page">
-      <h1 className="title">QR Code Scanner</h1>
+    <div className="modern-dashboard">
+      {/* Mobile Menu Button */}
+      <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
+        {mobileMenuOpen ? '✕' : '☰'}
+      </button>
 
-      {/* Statistics */}
-      {statistics && (
-        <div className="scanner-stats">
-          <div className="stat-card">
-            <h3>{statistics.todayAttendances}</h3>
-            <p>Today's Check-ins</p>
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      ></div>
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="logo">
+            <span className="logo-icon">🏋️</span>
+            {!sidebarCollapsed && <span className="logo-text">Gym Admin</span>}
           </div>
-          <div className="stat-card">
-            <h3>{statistics.todayBookings}</h3>
-            <p>Today's Bookings</p>
-          </div>
-          <div className="stat-card">
-            <h3>{statistics.attendanceRate}%</h3>
-            <p>Attendance Rate</p>
-          </div>
+          <button 
+            className="collapse-btn" 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            {sidebarCollapsed ? '→' : '←'}
+          </button>
         </div>
-      )}
 
-      {msg && (
-        <div className={`message ${msg.includes('✅') ? 'success' : 'error'}`}>
-          {msg}
-        </div>
-      )}
-
-      {/* Scanner Section */}
-      <div className="scanner-section">
-        {!scanning && !result && (
-          <div className="scanner-start">
-            <div className="scanner-icon">📷</div>
-            <h3>Ready to Scan</h3>
-            <p>Click the button below to start scanning QR codes</p>
-            <button className="start-scan-btn" onClick={startScanning}>
-              📸 Start Scanning
-            </button>
-          </div>
-        )}
-
-        {scanning && (
-          <div className="scanner-active">
-            <div id="qr-reader"></div>
-            <button className="stop-scan-btn" onClick={stopScanning}>
-              ⏹️ Stop Scanning
-            </button>
-          </div>
-        )}
-
-        {result && (
-          <div className={`scan-result ${result.success ? 'success' : 'error'}`}>
-            {result.success ? (
-              <div className="result-success">
-                <div className="success-icon">✅</div>
-                <h3>Check-in Successful!</h3>
-                <div className="result-details">
-                  <p><strong>Name:</strong> {result.data.attendance.user.name}</p>
-                  <p><strong>Email:</strong> {result.data.attendance.user.email}</p>
-                  {result.data.attendance.user.registrationNo && (
-                    <p><strong>Reg No:</strong> {result.data.attendance.user.registrationNo}</p>
-                  )}
-                  {result.data.attendance.user.indexNo && (
-                    <p><strong>Index No:</strong> {result.data.attendance.user.indexNo}</p>
-                  )}
-                  <p><strong>Slot:</strong> {result.data.booking.slot}</p>
-                  <p><strong>Time:</strong> {new Date(result.data.attendance.checkInTime).toLocaleTimeString()}</p>
-                </div>
-              </div>
-            ) : (
-              <div className="result-error">
-                <div className="error-icon">❌</div>
-                <h3>Check-in Failed</h3>
-                <p>{result.error}</p>
+        {user && (
+          <div className="sidebar-profile">
+            <div className="sidebar-avatar">
+              {user.name?.charAt(0).toUpperCase()}
+            </div>
+            {!sidebarCollapsed && (
+              <div className="sidebar-user-info">
+                <h4>{user.name}</h4>
+                <span className="sidebar-role">{user.role}</span>
               </div>
             )}
-            <button className="scan-again-btn" onClick={startScanning}>
-              🔄 Scan Another
-            </button>
           </div>
         )}
-      </div>
 
-      {/* Today's Attendance */}
-      <div className="attendance-section">
-        <h2>Today's Attendance ({todayAttendance.length})</h2>
-        {todayAttendance.length === 0 ? (
-          <p className="no-attendance">No check-ins yet today.</p>
-        ) : (
-          <div className="attendance-table-container">
-            <table className="attendance-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Reg No</th>
-                  <th>Slot</th>
-                  <th>Check-in Time</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {todayAttendance.map((record) => (
-                  <tr key={record._id}>
-                    <td>{record.user.name}</td>
-                    <td>{record.user.registrationNo || '-'}</td>
-                    <td>{record.slot}</td>
-                    <td>
-                      {new Date(record.checkInTime).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </td>
-                    <td>
-                      <span className={`status-badge ${record.status}`}>
-                        {record.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <nav className="sidebar-nav">
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              className={`nav-item ${isActiveRoute(item.path) ? 'active' : ''}`}
+              onClick={() => handleNavigation(item.path)}
+              title={sidebarCollapsed ? item.label : ''}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+            </button>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <button 
+            className="logout-sidebar-btn" 
+            onClick={logout}
+            title={sidebarCollapsed ? 'Logout' : ''}
+          >
+            <span className="nav-icon">🚪</span>
+            {!sidebarCollapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="main-content">
+        <div className="qr-scanner-page">
+          <h1 className="page-title">QR Code Scanner</h1>
+
+          {/* Statistics */}
+          {statistics && (
+            <div className="scanner-stats">
+              <div className="stat-card blue">
+                <div className="stat-icon">📊</div>
+                <div className="stat-info">
+                  <h3>{statistics.todayAttendances}</h3>
+                  <p>Today's Check-ins</p>
+                </div>
+              </div>
+              <div className="stat-card green">
+                <div className="stat-icon">📅</div>
+                <div className="stat-info">
+                  <h3>{statistics.todayBookings}</h3>
+                  <p>Today's Bookings</p>
+                </div>
+              </div>
+              <div className="stat-card purple">
+                <div className="stat-icon">📈</div>
+                <div className="stat-info">
+                  <h3>{statistics.attendanceRate}%</h3>
+                  <p>Attendance Rate</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {msg && (
+            <div className={`message ${msg.includes('✅') ? 'success' : 'error'}`}>
+              {msg}
+            </div>
+          )}
+
+          {/* Scanner Section */}
+          <div className="content-card scanner-section">
+            {!scanning && !result && (
+              <div className="scanner-start">
+                <div className="scanner-icon">📷</div>
+                <h3>Ready to Scan</h3>
+                <p>Click the button below to start scanning QR codes</p>
+                <button className="start-scan-btn" onClick={startScanning}>
+                  📸 Start Scanning
+                </button>
+              </div>
+            )}
+
+            {scanning && (
+              <div className="scanner-active">
+                <div id="qr-reader"></div>
+                <button className="stop-scan-btn" onClick={stopScanning}>
+                  ⏹️ Stop Scanning
+                </button>
+              </div>
+            )}
+
+            {result && (
+              <div className={`scan-result ${result.success ? 'success' : 'error'}`}>
+                {result.success ? (
+                  <div className="result-success">
+                    <div className="success-icon">✅</div>
+                    <h3>Check-in Successful!</h3>
+                    <div className="result-details">
+                      <p><strong>Name:</strong> {result.data.attendance.user.name}</p>
+                      <p><strong>Email:</strong> {result.data.attendance.user.email}</p>
+                      {result.data.attendance.user.registrationNo && (
+                        <p><strong>Reg No:</strong> {result.data.attendance.user.registrationNo}</p>
+                      )}
+                      {result.data.attendance.user.indexNo && (
+                        <p><strong>Index No:</strong> {result.data.attendance.user.indexNo}</p>
+                      )}
+                      <p><strong>Slot:</strong> {result.data.booking.slot}</p>
+                      <p><strong>Time:</strong> {new Date(result.data.attendance.checkInTime).toLocaleTimeString()}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="result-error">
+                    <div className="error-icon">❌</div>
+                    <h3>Check-in Failed</h3>
+                    <p>{result.error}</p>
+                  </div>
+                )}
+                <button className="scan-again-btn" onClick={startScanning}>
+                  🔄 Scan Another
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* Today's Attendance */}
+          <div className="content-card attendance-section">
+            <h2>Today's Attendance ({todayAttendance.length})</h2>
+            {todayAttendance.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📋</div>
+                <h3>No Check-ins Yet</h3>
+                <p>No one has checked in today.</p>
+              </div>
+            ) : (
+              <div className="attendance-table-container">
+                <table className="attendance-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Reg No</th>
+                      <th>Slot</th>
+                      <th>Check-in Time</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {todayAttendance.map((record) => (
+                      <tr key={record._id}>
+                        <td>{record.user.name}</td>
+                        <td>{record.user.registrationNo || '-'}</td>
+                        <td>{record.slot}</td>
+                        <td>
+                          {new Date(record.checkInTime).toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </td>
+                        <td>
+                          <span className={`status-badge ${record.status}`}>
+                            {record.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

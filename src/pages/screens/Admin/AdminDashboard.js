@@ -1,8 +1,8 @@
-// pages/screens/AdminDashboard.js
+// pages/screens/Admin/AdminDashboard.js
 
 import React, { useEffect, useState } from 'react';
 import API from '../../../api/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../../css/Dashboard.css';
 
 export default function AdminDashboard() {
@@ -14,7 +14,10 @@ export default function AdminDashboard() {
   });
   const [recentBookings, setRecentBookings] = useState([]);
   const [msg, setMsg] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     fetchUser();
@@ -44,7 +47,7 @@ export default function AdminDashboard() {
         totalUsers: new Set(allBookings.map(b => b.user?._id)).size
       });
 
-      setRecentBookings(allBookings.slice(0, 3));
+      setRecentBookings(allBookings.slice(0, 5));
     } catch (err) {
       console.error('Error fetching admin data:', err);
     }
@@ -56,12 +59,109 @@ export default function AdminDashboard() {
     navigate('/login');
   };
 
+  const menuItems = [
+    { icon: '📊', label: 'Dashboard', path: '/dashboard' },
+    { icon: '📋', label: 'All Bookings', path: '/admin' },
+    { icon: '📷', label: 'QR Scanner', path: '/admin/scanner' },
+    { icon: '👥', label: 'Users', path: '/admin/users' },
+    { icon: '⚙️', label: 'Settings', path: '/admin/settings' },
+    { icon: '🏋️', label: 'Book Slot', path: '/booking' },
+  ];
+
+  const isActiveRoute = (path) => {
+    if (path === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/';
+    }
+    return location.pathname === path;
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
-    <div className="page-background">
-      <div className="dashboard-container admin-dashboard">
-        <div className="dashboard-header admin-header">
-          <h2 className="dashboard-title">Admin Dashboard</h2>
-          <button onClick={logout} className="logout-btn">Logout</button>
+    <div className="modern-dashboard">
+      {/* Mobile Menu Button */}
+      <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
+        {mobileMenuOpen ? '✕' : '☰'}
+      </button>
+
+      {/* Mobile Overlay */}
+      <div 
+        className={`mobile-overlay ${mobileMenuOpen ? 'active' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      ></div>
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="logo">
+            <span className="logo-icon">🏋️</span>
+            {!sidebarCollapsed && <span className="logo-text">Gym Admin</span>}
+          </div>
+          <button 
+            className="collapse-btn" 
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            {sidebarCollapsed ? '→' : '←'}
+          </button>
+        </div>
+
+        {/* User Profile in Sidebar */}
+        {user && (
+          <div className="sidebar-profile">
+            <div className="sidebar-avatar">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            {!sidebarCollapsed && (
+              <div className="sidebar-user-info">
+                <h4>{user.name}</h4>
+                <span className="sidebar-role">{user.role}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Navigation Menu */}
+        <nav className="sidebar-nav">
+          {menuItems.map((item, index) => (
+            <button
+              key={index}
+              className={`nav-item ${isActiveRoute(item.path) ? 'active' : ''}`}
+              onClick={() => handleNavigation(item.path)}
+              title={sidebarCollapsed ? item.label : ''}
+            >
+              <span className="nav-icon">{item.icon}</span>
+              {!sidebarCollapsed && <span className="nav-label">{item.label}</span>}
+            </button>
+          ))}
+        </nav>
+
+        {/* Logout Button */}
+        <div className="sidebar-footer">
+          <button 
+            className="logout-sidebar-btn" 
+            onClick={logout}
+            title={sidebarCollapsed ? 'Logout' : ''}
+          >
+            <span className="nav-icon">🚪</span>
+            {!sidebarCollapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="main-content">
+        <div className="content-header">
+          <div>
+            <h1 className="page-title">Admin Dashboard</h1>
+            <p className="page-subtitle">Welcome back, {user?.name || 'Admin'}</p>
+          </div>
         </div>
 
         {msg && <div className="error-message">{msg}</div>}
@@ -72,188 +172,137 @@ export default function AdminDashboard() {
             <p>Loading...</p>
           </div>
         ) : (
-          <div className="dashboard-content">
-            {/* Profile Card */}
-            <div className="profile-card admin-profile">
-              <div className="profile-header">
-                <div className="profile-avatar admin-avatar">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="profile-info">
-                  <h3>{user.name}</h3>
-                  <span className="role-badge admin-badge">{user.role}</span>
-                </div>
-              </div>
-
-              <div className="profile-details">
-                <div className="detail-item">
-                  <span className="detail-label">Email</span>
-                  <span className="detail-value">{user.email}</span>
-                </div>
-
-                <div className="detail-item">
-                  <span className="detail-label">Role</span>
-                  <span className="detail-value">{user.role}</span>
-                </div>
-
-                {user.registrationNo && (
-                  <div className="detail-item">
-                    <span className="detail-label">Registration No</span>
-                    <span className="detail-value">{user.registrationNo}</span>
-                  </div>
-                )}
-
-                {user.indexNo && (
-                  <div className="detail-item">
-                    <span className="detail-label">Index No</span>
-                    <span className="detail-value">{user.indexNo}</span>
-                  </div>
-                )}
-
-                {user.batch && (
-                  <div className="detail-item">
-                    <span className="detail-label">Batch</span>
-                    <span className="detail-value">{user.batch}</span>
-                  </div>
-                )}
-
-                {user.telNo && (
-                  <div className="detail-item">
-                    <span className="detail-label">Tel No</span>
-                    <span className="detail-value">{user.telNo}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
+          <div className="dashboard-grid">
             {/* Statistics Cards */}
-            <div className="quick-links-section">
-              <h3 className="section-title">System Statistics</h3>
-              <div className="stats-grid">
-                <div className="stat-card blue">
-                  <div className="stat-icon">📊</div>
-                  <div className="stat-info">
-                    <h3>{stats.totalBookings}</h3>
-                    <p>Total Bookings</p>
-                  </div>
+            <div className="stats-row">
+              <div className="stat-card-modern blue">
+                <div className="stat-header">
+                  <span className="stat-icon-modern">📊</span>
+                  <span className="stat-trend">↑ 12%</span>
                 </div>
+                <h3 className="stat-number">{stats.totalBookings}</h3>
+                <p className="stat-label">Total Bookings</p>
+              </div>
 
-                <div className="stat-card green">
-                  <div className="stat-icon">📅</div>
-                  <div className="stat-info">
-                    <h3>{stats.todayBookings}</h3>
-                    <p>Today's Bookings</p>
-                  </div>
+              <div className="stat-card-modern green">
+                <div className="stat-header">
+                  <span className="stat-icon-modern">📅</span>
+                  <span className="stat-trend success">↑ 8%</span>
                 </div>
+                <h3 className="stat-number">{stats.todayBookings}</h3>
+                <p className="stat-label">Today's Bookings</p>
+              </div>
 
-                <div className="stat-card purple">
-                  <div className="stat-icon">👥</div>
-                  <div className="stat-info">
-                    <h3>{stats.totalUsers}</h3>
-                    <p>Active Members</p>
-                  </div>
+              <div className="stat-card-modern purple">
+                <div className="stat-header">
+                  <span className="stat-icon-modern">👥</span>
+                  <span className="stat-trend">↑ 5%</span>
                 </div>
+                <h3 className="stat-number">{stats.totalUsers}</h3>
+                <p className="stat-label">Active Members</p>
               </div>
             </div>
 
             {/* Recent Bookings */}
             {recentBookings.length > 0 && (
-              <div className="quick-links-section">
-                <h3 className="section-title">Recent Bookings</h3>
-                <div className="recent-bookings-list">
-                  {recentBookings.map((booking) => (
-                    <div key={booking._id} className="recent-booking-card">
-                      <div className="recent-booking-user">
-                        <div className="user-avatar-small">
-                          {booking.user?.name?.charAt(0).toUpperCase() || '?'}
-                        </div>
-                        <div className="user-info-small">
-                          <h4>{booking.user?.name || 'Unknown'}</h4>
-                          <p>{booking.user?.email || 'N/A'}</p>
-                        </div>
-                      </div>
-                      <div className="recent-booking-details">
-                        <span className="booking-slot-badge">{booking.slot}</span>
-                        <span className="booking-date-text">
-                          {new Date(booking.date).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+              <div className="content-card">
+                <div className="card-header">
+                  <h3>Recent Bookings</h3>
+                  <button 
+                    className="view-all-btn"
+                    onClick={() => navigate('/admin')}
+                  >
+                    View All →
+                  </button>
+                </div>
+                <div className="bookings-table-wrapper">
+                  <table className="modern-table">
+                    <thead>
+                      <tr>
+                        <th>Member</th>
+                        <th>Date</th>
+                        <th>Time Slot</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentBookings.map((booking) => (
+                        <tr key={booking._id}>
+                          <td>
+                            <div className="member-cell">
+                              <div className="member-avatar-small">
+                                {booking.user?.name?.charAt(0).toUpperCase() || '?'}
+                              </div>
+                              <div>
+                                <div className="member-name">
+                                  {booking.user?.name || 'Unknown'}
+                                </div>
+                                <div className="member-email">
+                                  {booking.user?.email || 'N/A'}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            {new Date(booking.date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </td>
+                          <td>
+                            <span className="slot-badge">{booking.slot}</span>
+                          </td>
+                          <td>
+                            <span className="status-badge active">Active</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
 
-            {/* Management Links */}
-            <div className="quick-links-section">
-              <h3 className="section-title">Management</h3>
-
-              <div className="quick-links-grid">
-                {/* All Bookings */}
-                <div
-                  className="link-card clickable"
-                  onClick={() => navigate("/admin")}
+            {/* Quick Actions */}
+            <div className="content-card">
+              <div className="card-header">
+                <h3>Quick Actions</h3>
+              </div>
+              <div className="quick-actions-grid">
+                <button 
+                  className="action-card"
+                  onClick={() => navigate('/admin/scanner')}
                 >
-                  <div className="link-icon">📋</div>
-                  <h4>All Bookings</h4>
-                  <p>View and manage bookings</p>
-                </div>
-
-                {/* QR Scanner - NEW */}
-                <div
-                  className="link-card clickable"
-                  onClick={() => navigate("/admin/scanner")}
+                  <span className="action-icon">📷</span>
+                  <span className="action-label">Scan QR Code</span>
+                </button>
+                <button 
+                  className="action-card"
+                  onClick={() => navigate('/booking')}
                 >
-                  <div className="link-icon">📷</div>
-                  <h4>QR Scanner</h4>
-                  <p>Scan student QR codes</p>
-                </div>
-
-                {/* User Management */}
-                <div
-                  className="link-card clickable"
-                  onClick={() => navigate("/admin/users")}
+                  <span className="action-icon">➕</span>
+                  <span className="action-label">New Booking</span>
+                </button>
+                <button 
+                  className="action-card"
+                  onClick={() => navigate('/admin/users')}
                 >
-                  <div className="link-icon">👥</div>
-                  <h4>User Management</h4>
-                  <p>Add, edit, delete users</p>
-                </div>
-
-                {/* Gym Settings */}
-                <div
-                  className="link-card clickable"
-                  onClick={() => navigate("/admin/settings")}
+                  <span className="action-icon">👤</span>
+                  <span className="action-label">Add User</span>
+                </button>
+                <button 
+                  className="action-card"
+                  onClick={() => navigate('/admin/settings')}
                 >
-                  <div className="link-icon">⚙️</div>
-                  <h4>Gym Settings</h4>
-                  <p>Manage slots and schedules</p>
-                </div>
-
-                {/* Book Gym Slot */}
-                <div
-                  className="link-card clickable"
-                  onClick={() => navigate("/booking")}
-                >
-                  <div className="link-icon">🏋️</div>
-                  <h4>Gym Booking</h4>
-                  <p>Book and manage slots</p>
-                </div>
-
-                {/* Reports - Coming Soon */}
-                <div className="link-card">
-                  <div className="link-icon">📊</div>
-                  <h4>Reports & Analytics</h4>
-                  <p>View detailed statistics</p>
-                  <span className="coming-soon">Coming Soon</span>
-                </div>
+                  <span className="action-icon">⚙️</span>
+                  <span className="action-label">Configure</span>
+                </button>
               </div>
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
