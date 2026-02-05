@@ -1,6 +1,6 @@
 // pages/screens/Admin/QRScanner.js
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import API from '../../../api/api';
@@ -25,7 +25,7 @@ export default function QRScanner() {
     fetchUser();
     fetchTodayAttendance();
     fetchStatistics();
-  }, []);
+  }, [fetchTodayAttendance, fetchStatistics]);
 
   useEffect(() => {
     if (scanning && !html5QrcodeScanner.current) {
@@ -50,7 +50,7 @@ export default function QRScanner() {
         html5QrcodeScanner.current = null;
       }
     };
-  }, [scanning]);
+  }, [scanning, onScanSuccess, onScanError]);
 
   const fetchUser = async () => {
     try {
@@ -61,7 +61,7 @@ export default function QRScanner() {
     }
   };
 
-  const fetchTodayAttendance = async () => {
+  const fetchTodayAttendance = useCallback(async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
       const res = await API.get(`/qr/attendance?date=${today}`);
@@ -69,18 +69,18 @@ export default function QRScanner() {
     } catch (err) {
       console.error('Error fetching attendance:', err);
     }
-  };
+  }, []);
 
-  const fetchStatistics = async () => {
+  const fetchStatistics = useCallback(async () => {
     try {
       const res = await API.get('/qr/statistics');
       setStatistics(res.data);
     } catch (err) {
       console.error('Error fetching statistics:', err);
     }
-  };
+  }, []);
 
-  const onScanSuccess = async (decodedText) => {
+  const onScanSuccess = useCallback(async (decodedText) => {
     setScanning(false);
     setMsg('Processing...');
 
@@ -100,11 +100,11 @@ export default function QRScanner() {
       });
       setMsg('❌ ' + (err.response?.data?.msg || 'Error processing QR code'));
     }
-  };
+  }, [fetchTodayAttendance, fetchStatistics]);
 
-  const onScanError = (error) => {
+  const onScanError = useCallback((error) => {
     // Ignore scan errors (they happen frequently while scanning)
-  };
+  }, []);
 
   const startScanning = () => {
     setScanning(true);
