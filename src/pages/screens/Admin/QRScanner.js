@@ -362,3 +362,4 @@ export default function QRScanner() {
     </div>
   );
 }
+//last
