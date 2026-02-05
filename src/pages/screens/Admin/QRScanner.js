@@ -16,17 +16,74 @@ export default function QRScanner() {
   const [statistics, setStatistics] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const scannerRef = useRef(null);
   const html5QrcodeScanner = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Fetch functions defined first
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await API.get('/auth/me');
+      setUser(res.data);
+    } catch (err) {
+      console.error('Error fetching user:', err);
+    }
+  }, []);
+
+  const fetchTodayAttendance = useCallback(async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const res = await API.get(`/qr/attendance?date=${today}`);
+      setTodayAttendance(res.data);
+    } catch (err) {
+      console.error('Error fetching attendance:', err);
+    }
+  }, []);
+
+  const fetchStatistics = useCallback(async () => {
+    try {
+      const res = await API.get('/qr/statistics');
+      setStatistics(res.data);
+    } catch (err) {
+      console.error('Error fetching statistics:', err);
+    }
+  }, []);
+
+  // Scan handlers defined after fetch functions
+  const onScanSuccess = useCallback(async (decodedText) => {
+    setScanning(false);
+    setMsg('Processing...');
+
+    try {
+      const res = await API.post('/qr/scan', { qrToken: decodedText });
+      setResult({
+        success: true,
+        data: res.data
+      });
+      setMsg('✅ Check-in successful!');
+      fetchTodayAttendance();
+      fetchStatistics();
+    } catch (err) {
+      setResult({
+        success: false,
+        error: err.response?.data?.msg || 'Error processing QR code'
+      });
+      setMsg('❌ ' + (err.response?.data?.msg || 'Error processing QR code'));
+    }
+  }, [fetchTodayAttendance, fetchStatistics]);
+
+  const onScanError = useCallback(() => {
+    // Ignore scan errors (they happen frequently while scanning)
+  }, []);
+
+  // Initial data fetch
   useEffect(() => {
     fetchUser();
     fetchTodayAttendance();
     fetchStatistics();
-  }, [fetchTodayAttendance, fetchStatistics]);
+  }, [fetchUser, fetchTodayAttendance, fetchStatistics]);
 
+  // Scanner initialization
   useEffect(() => {
     if (scanning && !html5QrcodeScanner.current) {
       html5QrcodeScanner.current = new Html5QrcodeScanner(
@@ -51,60 +108,6 @@ export default function QRScanner() {
       }
     };
   }, [scanning, onScanSuccess, onScanError]);
-
-  const fetchUser = async () => {
-    try {
-      const res = await API.get('/auth/me');
-      setUser(res.data);
-    } catch (err) {
-      console.error('Error fetching user:', err);
-    }
-  };
-
-  const fetchTodayAttendance = useCallback(async () => {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const res = await API.get(`/qr/attendance?date=${today}`);
-      setTodayAttendance(res.data);
-    } catch (err) {
-      console.error('Error fetching attendance:', err);
-    }
-  }, []);
-
-  const fetchStatistics = useCallback(async () => {
-    try {
-      const res = await API.get('/qr/statistics');
-      setStatistics(res.data);
-    } catch (err) {
-      console.error('Error fetching statistics:', err);
-    }
-  }, []);
-
-  const onScanSuccess = useCallback(async (decodedText) => {
-    setScanning(false);
-    setMsg('Processing...');
-
-    try {
-      const res = await API.post('/qr/scan', { qrToken: decodedText });
-      setResult({
-        success: true,
-        data: res.data
-      });
-      setMsg('✅ Check-in successful!');
-      fetchTodayAttendance();
-      fetchStatistics();
-    } catch (err) {
-      setResult({
-        success: false,
-        error: err.response?.data?.msg || 'Error processing QR code'
-      });
-      setMsg('❌ ' + (err.response?.data?.msg || 'Error processing QR code'));
-    }
-  }, [fetchTodayAttendance, fetchStatistics]);
-
-  const onScanError = useCallback((error) => {
-    // Ignore scan errors (they happen frequently while scanning)
-  }, []);
 
   const startScanning = () => {
     setScanning(true);
@@ -362,4 +365,3 @@ export default function QRScanner() {
     </div>
   );
 }
-//last
